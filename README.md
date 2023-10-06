@@ -6,6 +6,8 @@ Project has the following functionalities:
 ● Account holders have to pass through a login system to enter their accounts, and all these User accounts will be managed by the Administrator.
 ● Roles to implement: Faculty, Student, Admin.
 ● The application should possess password-protected administrative access, thus preventing the whole management system from unauthorized access.
+
+
 ● Once the Admin connects to the server, He/She should get a login and password prompt.
 After successful login, He/She will get menu for example:
 Do you want to:
@@ -14,7 +16,9 @@ Do you want to:
 - Activate/Deactivate Student
 - Update Student/Faculty details
 - Exit
- ● Once the Student connects to the server, He/She should get a login and password prompt.
+
+
+● Once the Student connects to the server, He/She should get a login and password prompt.
 After successful login, and He/She will get menu for example: Do you want to:
 - Enroll to new Courses
 - Unenroll from already enrolled Courses
@@ -22,6 +26,7 @@ After successful login, and He/She will get menu for example: Do you want to:
 - Password Change
 - Exit
 
+ 
  ● Once the Faculty connects to the server, He/She should get a login and password prompt.
 After successful login, He/She should will menu for example:
 Do you want to:
@@ -31,6 +36,8 @@ Do you want to:
 - Password Change
 - Exit
 (Assumption: Course will have a limited number of seats.)
+
+
 ● If you want to view the Course details then read lock is to be set else if you want to Enroll or Unenroll then write lock should be used to protect the critical data section.
 ● Use socket programming – Server maintains the database and serves multiple clients concurrently. Clients can connect to the server and access their specific academic details.
 ● Use System calls instead of Library functions wherever it is possible in the project: Process Management, File Management, File Locking, Semaphores, Multithreading and Inter Process Communication Mechanisms.
