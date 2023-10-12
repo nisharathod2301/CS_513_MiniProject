@@ -9,26 +9,25 @@ struct User {
     char username[50];
     char password[50];
     int role;
+    int login_id;
 };
 
 // Function to authenticate the user using user data from file
-int authenticate_user(const char* username, const char* password, int* role) {
+int authenticate_user(const char* username, const char* password, int role, int* login_id) {
     FILE* file = fopen("user_data.txt", "r");
     if (file == NULL) {
         perror("Failed to open user_data.txt");
         exit(1);
     }
 
-    char line[100];
-    while (fgets(line, sizeof(line), file)) {
-        char stored_username[50], stored_password[50];
-        int stored_role;
-        if (sscanf(line, "%s %s %d", stored_username, stored_password, &stored_role) == 3) {
-            if (strcmp(username, stored_username) == 0 && strcmp(password, stored_password) == 0) {
-                *role = stored_role;
-                fclose(file);
-                return 1; // Authentication successful
-            }
+    char stored_username[50], stored_password[50];
+    int stored_role, stored_login_id;
+
+    while (fscanf(file, "%s %s %d %d", stored_username, stored_password, &stored_role, &stored_login_id) != EOF) {
+        if (strcmp(username, stored_username) == 0 && strcmp(password, stored_password) == 0 && role == stored_role) {
+            *login_id = stored_login_id;
+            fclose(file);
+            return 1; // Authentication successful
         }
     }
 
@@ -76,6 +75,7 @@ int main() {
         }
 
         int role;
+        int login_id;
         char username[50];
         char password[50];
 
@@ -86,8 +86,8 @@ int main() {
         recv(client_socket, username, sizeof(username), 0);
         recv(client_socket, password, sizeof(password), 0);
 
-        // Authenticate the user
-        if (authenticate_user(username, password, &role)) {
+        // Authenticate the user with the received role
+        if (authenticate_user(username, password, role, &login_id)) {
             // Send the role back to the client
             send(client_socket, &role, sizeof(int), 0);
 
@@ -95,15 +95,15 @@ int main() {
             switch (role) {
                 case 1:
                     // Admin module
-                    printf("User '%s' logged in as an admin.\n", username);
+                    printf("Admin with Login-ID: MT%d logged in.\n", login_id);
                     break;
                 case 2:
                     // Professor module
-                    printf("User '%s' logged in as a professor.\n", username);
+                    printf("Professor with Login-ID: MT%d logged in.\n", login_id);
                     break;
                 case 3:
                     // Student module
-                    printf("User '%s' logged in as a student.\n", username);
+                    printf("Student with Login-ID: MT%d logged in.\n", login_id);
                     break;
                 default:
                     printf("Unknown role for user '%s'.\n", username);
@@ -112,9 +112,8 @@ int main() {
             // Authentication failed
             role = -1;
             send(client_socket, &role, sizeof(int), 0);
-            printf("Authentication failed for user '%s'.\n", username);
+            printf("Authentication failed. Please check your username, password, and role.\n");
         }
-
         // Close the client socket
         close(client_socket);
     }
