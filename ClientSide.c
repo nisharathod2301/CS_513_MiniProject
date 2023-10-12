@@ -4,6 +4,12 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+
+// Function to handle the admin menu (add_student)
+void add_student(int client_socket) {
+    // Implement add_student functionality here
+}
+
 int main() {
     int client_socket;
     struct sockaddr_in server_addr;
@@ -18,7 +24,7 @@ int main() {
     // Initialize server address struct
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(8080); // Port number
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Server IP address
+    server_addr.sin_addr.s_addr = inet_addr("172.16.144.112"); // Server IP address
 
     // Connect to the server
     if (connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
@@ -58,21 +64,19 @@ int main() {
                 // Admin menu options
                 printf("Login Successful!\n");
                 printf("Welcome, admin!\n");
-                printf("Admin Menu:\n");
+                add_student(client_socket); 
                 // Add admin menu options here
                 break;
             case 2:
                 // Professor menu options
                 printf("Login Successful!\n");
                 printf("Welcome, professor!\n");
-                printf("Professor Menu:\n");
                 // Add professor menu options here
                 break;
             case 3:
                 // Student menu options
                 printf("Login Successful!\n");
                 printf("Welcome, student!\n");
-                printf("Student Menu:\n");
                 // Add student menu options here
                 break;
             default:
