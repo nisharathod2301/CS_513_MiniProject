@@ -18,42 +18,65 @@ int main() {
 
     // Connect to the server
     connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+    printf("Sucessfully connected to Server!\n");
     // Receive and display prompts from the server
     char buffer[256];
     memset(buffer, 0, sizeof(buffer));
 
-    // Receive welocme wala
+    // Receive welocme wala thing from server
     recv(clientSocket, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
-
-    // Send an acknowledgment to the server
     char acknowledgment[] = "Received";
     send(clientSocket, acknowledgment, sizeof(acknowledgment), 0);
-
-    // Wait for 1 second
     sleep(1);
-
     memset(buffer, 0, sizeof(buffer));  // Clear the buffer
-
-// Prompt the user to enter an integer
+ 
+    //Send role to server
     int role;
     scanf("%d", &role);
-
-    // Send the integer to the server
     send(clientSocket, &role, sizeof(role), 0);
-
-    // Receive and display the acknowledgment from the server
     memset(buffer, 0, sizeof(buffer));
-    
     recv(clientSocket, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
-
-    // Wait for 1 second
     sleep(1);
+    
     //Recieve enter username propmt
     recv(clientSocket, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
+    
+    //Send username to server
+    char username[256];
+    scanf("%s", username);
+    send(clientSocket, username, sizeof(username), 0);
+    memset(buffer, 0, sizeof(buffer));
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+    
+    //Recieve enter password propmt
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
 
+    
+    // ... (Previous code)
+
+    // ... (Previous code)
+
+    // Send password to server
+    char password[256];
+    scanf("%s", password);
+    send(clientSocket, password, sizeof(password), 0);
+
+    // ... (Remaining code)
+
+    // ... (Remaining code)
+
+    
+    //Recieve authentication report
+    memset(buffer, 0, sizeof(buffer));
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+    send(clientSocket, acknowledgment, sizeof(acknowledgment), 0);
+    sleep(1);
     
     close(clientSocket);
 
