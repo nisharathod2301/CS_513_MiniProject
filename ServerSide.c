@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include "admin_menu.c"  // Include the admin_menu.c file
-
+#include "faculty_menu.c"  // Include the faculty_menu.c file
 
 
 // Define a structure to store user data
@@ -138,6 +138,12 @@ void* handleClient(void* clientSocket) {
                 int choice;
                 recv(client, &choice, sizeof(choice), 0);
                 handleAdminChoice(client, choice);  // Handle the choice made by the admin
+            }
+        if (role == 2) {
+                sendFacultyMenu(client);  // Send the faculty menu to the client
+                int choice;
+                recv(client, &choice, sizeof(choice), 0);
+                handleFacultyChoice(client, choice);  // Handle the choice made by the faculty
             }
     } else {
         char errormessage[] = "Enter correct role ID!";
