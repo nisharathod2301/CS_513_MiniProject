@@ -56,20 +56,11 @@ int main() {
     recv(clientSocket, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
-    
-    // ... (Previous code)
-
-    // ... (Previous code)
 
     // Send password to server
     char password[256];
     scanf("%s", password);
     send(clientSocket, password, sizeof(password), 0);
-
-    // ... (Remaining code)
-
-    // ... (Remaining code)
-
     
     //Recieve authentication report
     memset(buffer, 0, sizeof(buffer));
@@ -77,6 +68,12 @@ int main() {
     printf("%s", buffer);
     send(clientSocket, acknowledgment, sizeof(acknowledgment), 0);
     sleep(1);
+    
+    // Receive and display the server's response (which is the menu)
+    char menu[1024];  // Adjust the buffer size as needed
+    recv(clientSocket, menu, sizeof(menu), 0);
+    printf("%s", menu);
+
     
     close(clientSocket);
 
