@@ -131,19 +131,14 @@ void* handleClient(void* clientSocket) {
         
         // Send the authentication result to the client
         sendAuthenticationResult(client, authResult);
-        
+       
+        // Send the admin menu to the client
         if (role == 1) {
-                sendAdminMenu(client);  // Send the admin menu to the client
+                sendAdminMenu(client);
+                int choice;
+                recv(client, &choice, sizeof(choice), 0);
+                handleAdminChoice(client, choice);  // Handle the choice made by the admin
             }
-        // ... (Remaining code)
-
-        // Debug: Print password
-//        printf("Received Password: %s\n", password);
-
-        // Authenticate the user
-//        int authResult = authenticateUser(username, password, role);
-        // Send the authentication result to the client
-//        sendAuthenticationResult(client, authResult);
     } else {
         char errormessage[] = "Enter correct role ID!";
         send(client, errormessage, sizeof(errormessage), 0);
