@@ -82,7 +82,6 @@ int main() {
     scanf("%d", &adminchoice);
     // Send the user's choice to the server
     send(clientSocket, &adminchoice, sizeof(adminchoice), 0);
-    // Receive and display the server's response (which is the output based on the user's choice)
     char serverResponse[1024];  // Adjust the buffer size as needed
     recv(clientSocket, serverResponse, sizeof(serverResponse), 0);
     printf("%s\n", serverResponse);
@@ -99,8 +98,19 @@ int main() {
     recv(clientSocket, serverResponse, sizeof(serverResponse), 0);
     printf("%s\n", serverResponse);
 
-    
-    
+    // Receive and display the student menu sent by the server
+    char studentMenu[1024];  // Adjust the buffer size as needed
+    recv(clientSocket, studentMenu, sizeof(studentMenu), 0);
+    printf("%s", studentMenu);
+    int studentchoice;
+    // Get the user's choice, for example:
+    printf("Enter Your Choice: ");
+    scanf("%d", &studentchoice);
+    // Send the user's choice to the server
+    send(clientSocket, &studentchoice, sizeof(studentchoice), 0);
+    recv(clientSocket, serverResponse, sizeof(serverResponse), 0);
+    printf("%s\n", serverResponse);
+        
     close(clientSocket);
 
     return 0;
