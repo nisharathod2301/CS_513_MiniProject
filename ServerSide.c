@@ -7,6 +7,8 @@
 #include <pthread.h>
 #include "admin_menu.c"  // Include the admin_menu.c file
 #include "faculty_menu.c"  // Include the faculty_menu.c file
+#include "student_menu.c"  // Include the student_menu.c file
+
 
 
 // Define a structure to store user data
@@ -144,6 +146,12 @@ void* handleClient(void* clientSocket) {
                 int choice;
                 recv(client, &choice, sizeof(choice), 0);
                 handleFacultyChoice(client, choice);  // Handle the choice made by the faculty
+            }
+        if (role == 3) {
+                sendStudentMenu(client);  // Send the student menu to the client
+                int choice;
+                recv(client, &choice, sizeof(choice), 0);
+                handleStudentChoice(client, choice);  // Handle the choice made by the student
             }
     } else {
         char errormessage[] = "Enter correct role ID!";
