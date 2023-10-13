@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <pthread.h>
+#include "admin_menu.c"  // Include the admin_menu.c file
 
 
 
@@ -127,9 +128,13 @@ void* handleClient(void* clientSocket) {
 
         // Authenticate the user
         int authResult = authenticateUser(username, password, role);
+        
         // Send the authentication result to the client
         sendAuthenticationResult(client, authResult);
-
+        
+        if (role == 1) {
+                sendAdminMenu(client);  // Send the admin menu to the client
+            }
         // ... (Remaining code)
 
         // Debug: Print password
