@@ -8,8 +8,20 @@
 #include "admin_menu.c"  // Include the admin_menu.c file
 #include "faculty_menu.c"  // Include the faculty_menu.c file
 #include "student_menu.c"  // Include the student_menu.c file
+#include "server_functions.h"
 
+void addLoginDetails(const char* username, const char* password, int role) {
+    FILE* file = fopen("login_data.txt", "a"); // Open the file in append mode
+    if (file == NULL) {
+        perror("Error opening login_data.txt");
+        return;
+    }
 
+    // Append the new student data to the file
+    fprintf(file, "%s %s %d\n", username, password, role);
+
+    fclose(file);
+}
 
 // Define a structure to store user data
 typedef struct {
@@ -20,28 +32,12 @@ typedef struct {
 
 UserData users[4]; // Store user data for up to 4 users
 
-// Function to read user data from the file and store it
-void readUserData() {
-    FILE *file = fopen("user_data.txt", "r");
-    if (file == NULL) {
-        perror("Error opening user_data.txt");
-        exit(1);
-    }
-
-    int i = 0;
-    while (fscanf(file, "%s %s %d", users[i].username, users[i].password, &users[i].role) == 3) {
-        i++;
-    }
-
-    fclose(file);
-}
-
 // Function to authenticate a user
 // Function to authenticate a user
 int authenticateUser(const char* username, const char* password, int role) {
-    FILE* file = fopen("user_data.txt", "r");
+    FILE* file = fopen("login_data.txt", "r");
     if (file == NULL) {
-        perror("Failed to open user_data.txt");
+        perror("Failed to open login_data.txt");
         exit(1);
     }
 
@@ -52,7 +48,7 @@ int authenticateUser(const char* username, const char* password, int role) {
         if (sscanf(line, "%s %s %d", stored_username, stored_password, &stored_role) == 3) {
             printf("Stored Username: %s, Password: %s, Role: %d\n", stored_username, stored_password, stored_role);
             printf("Input Username: %s, Password: %s, Role: %d\n", username, password, role);
-            if (strcmp(username, stored_username) == 0 && strcmp(password, stored_password) == 0) {
+            if (strcmp(username, stored_username) == 0 && strcmp(password, stored_password) == 0 && stored_role==role) {
                 fclose(file);
                 printf("Authentication successful!\n");
                 return 1; // Authentication successful
@@ -64,7 +60,6 @@ int authenticateUser(const char* username, const char* password, int role) {
     printf("Authentication failed\n");
     return 0; // Authentication failed
 }
-
 
 // Function to send authentication result to the client
 void sendAuthenticationResult(int client, int result) {
@@ -121,7 +116,7 @@ void* handleClient(void* clientSocket) {
         // Password part
         char passwordMessage[] = "Enter Password (Must be at most 8 digits):";
         send(client, passwordMessage, sizeof(passwordMessage), 0);
-        
+
         // ... (Previous code)
 
         // Receive password from the client
@@ -130,29 +125,29 @@ void* handleClient(void* clientSocket) {
 
         // Authenticate the user
         int authResult = authenticateUser(username, password, role);
-        
+
         // Send the authentication result to the client
         sendAuthenticationResult(client, authResult);
-       
-        // Send the admin menu to the client
-        if (role == 1) {
+
+        if (authResult) {
+            // Authentication was successful, so send the appropriate menu
+            if (role == 1) {
                 sendAdminMenu(client);
                 int choice;
                 recv(client, &choice, sizeof(choice), 0);
                 handleAdminChoice(client, choice);  // Handle the choice made by the admin
-            }
-        if (role == 2) {
+            } else if (role == 2) {
                 sendFacultyMenu(client);  // Send the faculty menu to the client
                 int choice;
                 recv(client, &choice, sizeof(choice), 0);
                 handleFacultyChoice(client, choice);  // Handle the choice made by the faculty
-            }
-        if (role == 3) {
+            } else if (role == 3) {
                 sendStudentMenu(client);  // Send the student menu to the client
                 int choice;
                 recv(client, &choice, sizeof(choice), 0);
                 handleStudentChoice(client, choice);  // Handle the choice made by the student
             }
+        }
     } else {
         char errormessage[] = "Enter correct role ID!";
         send(client, errormessage, sizeof(errormessage), 0);
@@ -160,7 +155,6 @@ void* handleClient(void* clientSocket) {
     return NULL;
 }
 
-// ... (Remaining code)
 
 int main() {
     int serverSocket, clientSocket;
